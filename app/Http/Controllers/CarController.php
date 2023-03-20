@@ -12,10 +12,28 @@ class CarController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         //
+
+        // Getting data from request
+        $per_page = $request->per_page;
+        $page = $request->page;
+
+        // Calculating where which page to get
+        $toSkip = $page * $per_page;
+
+        // Instantiation of query
+        $myQuery = Car::query();
+
         $cars = Car::all();
+        if($per_page){
+            $cars = $myQuery->paginate($per_page);
+        }
+        if($page){
+            $cars = $myQuery->skip($toSkip)->paginate($per_page);
+        }
+        
         return response()->json($cars);
     }
 
